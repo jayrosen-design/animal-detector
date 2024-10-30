@@ -73,18 +73,8 @@ export const setupWebcam = async (deviceId?: string) => {
   const webcam = new window.tmImage.Webcam(400, 400, flip) as TeachableMachineWebcam;
   
   if (deviceId) {
-    try {
-      const constraints = {
-        video: {
-          deviceId: { exact: deviceId }
-        }
-      };
-      // @ts-ignore - deviceId is supported but not typed in the library
-      webcam.webcam = await navigator.mediaDevices.getUserMedia(constraints);
-    } catch (error) {
-      console.error('Error accessing camera:', error);
-      throw error;
-    }
+    // @ts-ignore - deviceId is supported but not typed in the library
+    webcam.deviceId = deviceId;
   }
   
   await webcam.setup();

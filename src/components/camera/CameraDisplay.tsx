@@ -12,36 +12,20 @@ const CameraDisplay = ({ isLive, deviceId, onWebcamSetup, capturedImage }: Camer
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let webcam: any;
-
-    const initCamera = async () => {
-      if (isLive) {
-        // Stop any existing webcam before initializing a new one
-        if (webcam) {
-          webcam.stop();
-        }
-        
-        webcam = await setupWebcam(deviceId);
-        
+    if (isLive) {
+      const initCamera = async () => {
+        const webcam = await setupWebcam(deviceId);
         if (containerRef.current) {
           containerRef.current.innerHTML = '';
           containerRef.current.appendChild(webcam.canvas);
         }
-        
         await webcam.play();
         onWebcamSetup(webcam);
-      }
-    };
+      };
 
-    initCamera();
-
-    // Cleanup function to stop the webcam when component unmounts or deviceId changes
-    return () => {
-      if (webcam) {
-        webcam.stop();
-      }
-    };
-  }, [isLive, deviceId, onWebcamSetup]); // Added deviceId to dependencies
+      initCamera();
+    }
+  }, [isLive, deviceId, onWebcamSetup]);
 
   return (
     <div className="relative aspect-video bg-sage rounded-lg overflow-hidden">
