@@ -67,10 +67,16 @@ interface TeachableMachineWebcam {
   canvas: HTMLCanvasElement;
 }
 
-export const setupWebcam = async () => {
+export const setupWebcam = async (deviceId?: string) => {
   await loadModel(); // Ensure model is loaded before setting up webcam
   const flip = true;
   const webcam = new window.tmImage.Webcam(400, 400, flip) as TeachableMachineWebcam;
+  
+  if (deviceId) {
+    // @ts-ignore - deviceId is supported but not typed in the library
+    webcam.deviceId = deviceId;
+  }
+  
   await webcam.setup();
   return webcam;
 };

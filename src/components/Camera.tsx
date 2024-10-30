@@ -3,7 +3,7 @@ import { loadModel, setupWebcam } from '@/utils/tensorflow';
 import { Detection, AUDIO_RANGES } from '@/utils/types';
 import DetectionResult from './DetectionResult';
 import { Button } from './ui/button';
-import { Camera as CameraIcon } from 'lucide-react';
+import { Camera as CameraIcon, SwitchCamera } from 'lucide-react';
 
 interface CameraProps {
   onDetection: (detection: Detection) => void;
@@ -14,12 +14,54 @@ const Camera = ({ onDetection }: CameraProps) => {
   const [error, setError] = useState<string | null>(null);
   const [currentDetection, setCurrentDetection] = useState<Detection | null>(null);
   const [isLive, setIsLive] = useState(true);
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+  const [currentDeviceIndex, setCurrentDeviceIndex] = useState(0);
   const webcamRef = useRef<any>(null);
   const modelRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number>();
 
+  const getVideoDevices = async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(device => device.kind === 'videoinput');
+      setDevices(videoDevices);
+    } catch (err) {
+      console.error('Error getting video devices:', err);
+    }
+  };
+
+  const switchCamera = async () => {
+    if (devices.length <= 1) return;
+    
+    // Stop current camera
+    if (webcamRef.current) {
+      webcamRef.current.stop();
+    }
+
+    // Switch to next camera
+    const nextIndex = (currentDeviceIndex + 1) % devices.length;
+    setCurrentDeviceIndex(nextIndex);
+    
+    // Reinitialize camera with new device
+    try {
+      const webcam = await setupWebcam(devices[nextIndex].deviceId);
+      webcamRef.current = webcam;
+      
+      if (containerRef.current) {
+        containerRef.current.innerHTML = '';
+        containerRef.current.appendChild(webcam.canvas);
+      }
+      
+      await webcam.play();
+    } catch (err) {
+      setError('Failed to switch camera. Please try again.');
+    }
+  };
+
   useEffect(() => {
+    getVideoDevices();
+    
     const initCamera = async () => {
       try {
         const model = await loadModel();
@@ -120,6 +162,16 @@ const Camera = ({ onDetection }: CameraProps) => {
               className="aspect-video bg-sage rounded-lg overflow-hidden"
             />
             <div className="mt-4 space-y-4">
+              {devices.length > 1 && (
+                <Button 
+                  onClick={switchCamera} 
+                  variant="outline" 
+                  className="w-full"
+                >
+                  <SwitchCamera className="w-4 h-4 mr-2" />
+                  Switch Camera ({currentDeviceIndex + 1}/{devices.length})
+                </Button>
+              )}
               {isLive ? (
                 <Button 
                   onClick={handleCapture} 
