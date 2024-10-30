@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Detection } from '@/utils/types';
-import { ArrowUpDown, Trash2 } from 'lucide-react';
+import { ArrowUpDown, Trash2, CircleCheck, CircleX } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -111,7 +111,14 @@ const SessionLog = ({ detections, onClearHistory }: SessionLogProps) => {
                     {detection.audioRange}
                   </td>
                   <td className="px-4 py-3 text-sm">
-                    {getSignalEmitted(detection)}
+                    <div className="flex items-center gap-2">
+                      {detection.confidence >= 0.75 ? (
+                        <CircleCheck className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <CircleX className="w-4 h-4 text-red-500" />
+                      )}
+                      {getSignalEmitted(detection)}
+                    </div>
                   </td>
                 </tr>
               ))}

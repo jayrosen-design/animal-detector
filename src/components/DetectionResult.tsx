@@ -1,4 +1,5 @@
 import { Detection } from '@/utils/types';
+import { CircleCheck, CircleX } from 'lucide-react';
 
 interface DetectionResultProps {
   detection: Detection;
@@ -14,6 +15,8 @@ const DetectionResult = ({ detection }: DetectionResultProps) => {
     }
     return "No signal emitted";
   };
+
+  const isSignalEmitted = detection.confidence >= 0.75;
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-md animate-fadeIn">
@@ -33,7 +36,14 @@ const DetectionResult = ({ detection }: DetectionResultProps) => {
         </div>
         <div>
           <div className="text-sm text-gray-600">Signal Status</div>
-          <div className="text-xl font-semibold">{getSignalEmitted(detection)}</div>
+          <div className="text-xl font-semibold flex items-center gap-2">
+            {isSignalEmitted ? (
+              <CircleCheck className="w-5 h-5 text-green-500" />
+            ) : (
+              <CircleX className="w-5 h-5 text-red-500" />
+            )}
+            {getSignalEmitted(detection)}
+          </div>
         </div>
       </div>
     </div>
