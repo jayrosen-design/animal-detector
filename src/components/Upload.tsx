@@ -62,8 +62,8 @@ const Upload = ({ onDetection }: UploadProps) => {
   };
 
   return (
-    <div className="p-4">
-      <div className="max-w-md mx-auto">
+    <div className="w-full px-4">
+      <div className="max-w-4xl mx-auto">
         <label className="block w-full aspect-video bg-sage border-2 border-dashed border-primary rounded-lg cursor-pointer hover:bg-sage/80 transition-colors">
           <div className="flex flex-col items-center justify-center h-full">
             {previewUrl ? (

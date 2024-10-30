@@ -116,24 +116,16 @@ const Camera = ({ onDetection }: CameraProps) => {
     setCurrentDeviceIndex(nextIndex);
   };
 
-  if (error) {
-    return (
-      <div className="p-4 text-center">
-        <CameraIcon className="w-12 h-12 text-red-500 mx-auto mb-2" />
-        <p className="text-red-500">{error}</p>
-        <Button onClick={handleResume} className="mt-4">
-          Try Again
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <div className="p-4">
-      <div className="max-w-md mx-auto">
-        {isLoading ? (
-          <div className="aspect-video bg-sage rounded-lg flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    <div className="w-full px-4">
+      <div className="max-w-4xl mx-auto">
+        {error ? (
+          <div className="p-4 text-center">
+            <CameraIcon className="w-12 h-12 text-red-500 mx-auto mb-2" />
+            <p className="text-red-500">{error}</p>
+            <Button onClick={handleResume} className="mt-4">
+              Try Again
+            </Button>
           </div>
         ) : (
           <div className="relative">
