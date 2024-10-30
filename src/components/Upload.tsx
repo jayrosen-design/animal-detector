@@ -65,17 +65,9 @@ const Upload = ({ onDetection }: UploadProps) => {
     <div className="w-full px-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg p-4 mb-4 shadow-sm">
-          <h2 className="text-lg font-semibold text-primary mb-2">About</h2>
-          <p className="text-gray-600 mb-2">
-            This AI prototype, developed by UF Engineering students, detects animals and emits ultrasonic signals to help prevent wildlife-vehicle collisions.
+          <p className="text-gray-600">
+            UF Engineering Innovation Team 7 developed Animal Detector, an AI prototype to prevent wildlife-vehicle collisions. Upload or capture an animal image, and the AI will identify the species and emit ultrasonic signals to deter wildlife.
           </p>
-          <div className="bg-sage/20 p-3 rounded-lg">
-            <ol className="list-decimal list-inside text-gray-600 text-sm">
-              <li>Upload/capture an image of an animal</li>
-              <li>AI will identify the species</li>
-              <li>Ultrasonic signal will be emitted if detected</li>
-            </ol>
-          </div>
         </div>
 
         <label className="block w-full aspect-video bg-sage border-2 border-dashed border-primary rounded-lg cursor-pointer hover:bg-sage/80 transition-colors">
