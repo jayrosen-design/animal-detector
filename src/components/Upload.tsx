@@ -64,6 +64,25 @@ const Upload = ({ onDetection }: UploadProps) => {
   return (
     <div className="w-full px-4">
       <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg p-6 mb-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-primary mb-3">About This Project</h2>
+          <p className="text-gray-600 mb-4">
+            Welcome to the Animal Detection Prototype, developed by University of Florida College of Engineering students. This AI-powered application is designed to help reduce wildlife-vehicle collisions on roads.
+          </p>
+          <p className="text-gray-600 mb-4">
+            When an animal is detected in an uploaded image or through the camera, the system will identify the species and emit an ultrasonic sound specifically calibrated to safely deter that particular animal from the roadway.
+          </p>
+          <div className="bg-sage/20 p-4 rounded-lg">
+            <h3 className="font-medium text-primary mb-2">How to Use:</h3>
+            <ol className="list-decimal list-inside text-gray-600 space-y-1">
+              <li>Upload an image or use the camera to capture an animal</li>
+              <li>The AI will analyze the image and identify the animal species</li>
+              <li>If an animal is detected with high confidence, an appropriate ultrasonic signal will be emitted</li>
+              <li>View the detection history in the Log tab to track all identifications</li>
+            </ol>
+          </div>
+        </div>
+
         <label className="block w-full aspect-video bg-sage border-2 border-dashed border-primary rounded-lg cursor-pointer hover:bg-sage/80 transition-colors">
           <div className="flex flex-col items-center justify-center h-full">
             {previewUrl ? (
