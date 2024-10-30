@@ -17,6 +17,16 @@ const SessionLog = ({ detections }: SessionLogProps) => {
     return sortOrder === 'asc' ? comparison : -comparison;
   });
 
+  const getSignalEmitted = (detection: Detection) => {
+    if (detection.confidence >= 0.75) {
+      const range = detection.audioRange;
+      const [min, max] = range.split('-').map(n => parseFloat(n));
+      const midRange = ((min + max) / 2).toFixed(1);
+      return `${midRange} kHz signal emitted`;
+    }
+    return "No signal emitted";
+  };
+
   const toggleSort = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
@@ -43,7 +53,9 @@ const SessionLog = ({ detections }: SessionLogProps) => {
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Image</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Time</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Animal</th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Confidence</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Audio Range</th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Signal Emitted</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,13 +83,19 @@ const SessionLog = ({ detections }: SessionLogProps) => {
                       {detection.animal}
                     </td>
                     <td className="px-4 py-3 text-sm">
+                      {(detection.confidence * 100).toFixed(1)}%
+                    </td>
+                    <td className="px-4 py-3 text-sm">
                       {detection.audioRange}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      {getSignalEmitted(detection)}
                     </td>
                   </tr>
                 ))}
                 {sortedDetections.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                       No detections yet. Try uploading an image or using the camera!
                     </td>
                   </tr>
