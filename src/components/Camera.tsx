@@ -38,11 +38,15 @@ const Camera = ({ onDetection }: CameraProps) => {
           );
           
           if (bestPrediction.probability >= 0.5) {
-            const detection = {
+            // Create a data URL from the canvas
+            const imageUrl = webcam.canvas.toDataURL('image/jpeg');
+            
+            const detection: Detection = {
               animal: bestPrediction.className,
               confidence: bestPrediction.probability,
               audioRange: AUDIO_RANGES[bestPrediction.className],
-              timestamp: new Date()
+              timestamp: new Date(),
+              imageUrl: imageUrl
             };
             setCurrentDetection(detection);
             onDetection(detection);
