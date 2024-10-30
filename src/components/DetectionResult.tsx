@@ -1,5 +1,7 @@
 import { Detection } from '@/utils/types';
 import { CircleCheck, CircleX } from 'lucide-react';
+import { playFrequency } from '@/utils/audio';
+import { useEffect } from 'react';
 
 interface DetectionResultProps {
   detection: Detection;
@@ -17,6 +19,15 @@ const DetectionResult = ({ detection }: DetectionResultProps) => {
   };
 
   const isSignalEmitted = detection.confidence >= 0.75;
+
+  useEffect(() => {
+    if (isSignalEmitted) {
+      const range = detection.audioRange;
+      const [min, max] = range.split('-').map(n => parseFloat(n));
+      const midRange = (min + max) / 2;
+      playFrequency(midRange);
+    }
+  }, [detection, isSignalEmitted]);
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-md animate-fadeIn">
