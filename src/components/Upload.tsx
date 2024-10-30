@@ -3,6 +3,7 @@ import { Upload as UploadIcon } from 'lucide-react';
 import { predictFromImage } from '@/utils/tensorflow';
 import { Detection } from '@/utils/types';
 import DetectionResult from './DetectionResult';
+import { useToast } from '@/hooks/use-toast';
 
 interface UploadProps {
   onDetection: (detection: Detection) => void;
@@ -11,6 +12,7 @@ interface UploadProps {
 const Upload = ({ onDetection }: UploadProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentDetection, setCurrentDetection] = useState<Detection | null>(null);
+  const { toast } = useToast();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -19,16 +21,32 @@ const Upload = ({ onDetection }: UploadProps) => {
     setIsLoading(true);
     try {
       const img = new Image();
+      img.crossOrigin = 'anonymous';
       img.src = URL.createObjectURL(file);
-      await img.decode();
+      
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
       
       const detection = await predictFromImage(img);
       if (detection) {
         setCurrentDetection(detection);
         onDetection(detection);
+      } else {
+        toast({
+          title: "No animal detected",
+          description: "Try uploading a clearer image of an animal.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('Error processing image:', error);
+      toast({
+        title: "Error processing image",
+        description: "Please try again with a different image.",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
