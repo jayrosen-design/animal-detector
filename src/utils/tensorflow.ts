@@ -1,4 +1,5 @@
 import { Detection } from './types';
+import { AUDIO_RANGES } from './types';
 
 const MODEL_URL = "https://teachablemachine.withgoogle.com/models/5UM9CXpEc/";
 
@@ -51,11 +52,18 @@ export const predictFromImage = async (imageElement: HTMLImageElement): Promise<
   }
 };
 
+interface TeachableMachineWebcam {
+  setup: () => Promise<void>;
+  play: () => Promise<void>;
+  stop: () => void;
+  update: () => void;
+  canvas: HTMLCanvasElement;
+}
+
 export const setupWebcam = async () => {
   await loadModel(); // Ensure model is loaded before setting up webcam
   const flip = true;
-  const webcam = new window.tmImage.Webcam(400, 400, flip);
+  const webcam = new window.tmImage.Webcam(400, 400, flip) as TeachableMachineWebcam;
   await webcam.setup();
-  webcam.model = model; // Attach model to webcam instance for easier access
   return webcam;
 };
