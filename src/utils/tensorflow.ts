@@ -23,12 +23,7 @@ export const loadModel = async () => {
       const modelURL = MODEL_URL + "model.json";
       const metadataURL = MODEL_URL + "metadata.json";
       
-      model = await window.tmImage.load(modelURL, metadataURL, {
-        requestInit: {
-          mode: 'cors',
-          credentials: 'omit'
-        }
-      });
+      model = await window.tmImage.load(modelURL, metadataURL);
     } catch (error) {
       console.error('Error loading model:', error);
       throw new Error('Failed to load the animal detection model. Please try again later.');
