@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Camera as CameraIcon } from 'lucide-react';
 import { loadModel, setupWebcam } from '@/utils/tensorflow';
-import { Detection } from '@/utils/types';
+import { Detection, AUDIO_RANGES } from '@/utils/types';
 import DetectionResult from './DetectionResult';
 
 interface CameraProps {
