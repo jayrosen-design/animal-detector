@@ -6,8 +6,10 @@ export const playFrequency = (frequency: number, durationMs: number = 3000) => {
   oscillator.connect(gainNode);
   gainNode.connect(audioContext.destination);
 
-  // Convert kHz to Hz
-  oscillator.frequency.value = frequency * 1000;
+  // Scale the frequency to an audible range (200-2000 Hz)
+  // Map the original kHz range (0.3-85) to audible frequencies
+  const normalizedFreq = ((frequency - 0.3) / (85 - 0.3)) * (2000 - 200) + 200;
+  oscillator.frequency.value = normalizedFreq;
   
   // Start with 0 volume and fade in
   gainNode.gain.setValueAtTime(0, audioContext.currentTime);
