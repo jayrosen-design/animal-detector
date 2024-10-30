@@ -66,7 +66,7 @@ const Upload = ({ onDetection }: UploadProps) => {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg p-4 mb-4 shadow-sm">
           <p className="text-gray-600">
-            UF Engineering Innovation Team 7 developed Animal Detector, an AI prototype to prevent wildlife-vehicle collisions. Upload or capture an animal image, and the AI will identify the species and emit ultrasonic signals to deter wildlife.
+            Developed by UF Engineering students, this AI prototype helps prevent wildlife-vehicle collisions. Upload or capture an animal image, and the AI will identify the species and emit ultrasonic signals to deter wildlife. The model was trained using <a href="https://www.kaggle.com/datasets/iamsouravbanerjee/animal-image-dataset-90-different-animals/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">[1]</a> <a href="https://www.kaggle.com/datasets/jerrinbright/cheetahtigerwolf" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">[2]</a> datasets via <a href="https://teachablemachine.withgoogle.com/models/5UM9CXpEc/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Teachable Machine</a>.
           </p>
         </div>
 
