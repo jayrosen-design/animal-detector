@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
-import { loadModel, setupWebcam } from '@/utils/tensorflow';
-import { Detection, AUDIO_RANGES } from '@/utils/types';
+import { useState, useRef, useEffect } from 'react';
+import { loadModel } from '@/utils/tensorflow';
+import { Detection } from '@/utils/types';
 import DetectionResult from './DetectionResult';
+import { Camera as CameraIcon } from 'lucide-react';
 import { Button } from './ui/button';
-import { Camera as CameraIcon, SwitchCamera } from 'lucide-react';
+import CameraDisplay from './camera/CameraDisplay';
+import CameraControls from './camera/CameraControls';
 
 interface CameraProps {
   onDetection: (detection: Detection) => void;
@@ -16,81 +18,36 @@ const Camera = ({ onDetection }: CameraProps) => {
   const [isLive, setIsLive] = useState(true);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [currentDeviceIndex, setCurrentDeviceIndex] = useState(0);
+  const [capturedImage, setCapturedImage] = useState<string | undefined>();
+  
   const webcamRef = useRef<any>(null);
   const modelRef = useRef<any>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number>();
 
-  const getVideoDevices = async () => {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(device => device.kind === 'videoinput');
-      setDevices(videoDevices);
-    } catch (err) {
-      console.error('Error getting video devices:', err);
-    }
-  };
-
-  const switchCamera = async () => {
-    if (devices.length <= 1) return;
-    
-    // Stop current camera
-    if (webcamRef.current) {
-      webcamRef.current.stop();
-    }
-
-    // Switch to next camera
-    const nextIndex = (currentDeviceIndex + 1) % devices.length;
-    setCurrentDeviceIndex(nextIndex);
-    
-    // Reinitialize camera with new device
-    try {
-      const webcam = await setupWebcam(devices[nextIndex].deviceId);
-      webcamRef.current = webcam;
-      
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-        containerRef.current.appendChild(webcam.canvas);
-      }
-      
-      await webcam.play();
-    } catch (err) {
-      setError('Failed to switch camera. Please try again.');
-    }
-  };
-
   useEffect(() => {
-    getVideoDevices();
-    
-    const initCamera = async () => {
+    const getVideoDevices = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        setDevices(videoDevices);
+      } catch (err) {
+        console.error('Error getting video devices:', err);
+      }
+    };
+
+    const initModel = async () => {
       try {
         const model = await loadModel();
         modelRef.current = model;
-        const webcam = await setupWebcam();
-        webcamRef.current = webcam;
-        
-        if (containerRef.current) {
-          containerRef.current.innerHTML = '';
-          containerRef.current.appendChild(webcam.canvas);
-        }
-        
-        await webcam.play();
         setIsLoading(false);
-        
-        const updateFrame = () => {
-          if (!isLive || !webcamRef.current) return;
-          webcamRef.current.update();
-          animationFrameRef.current = requestAnimationFrame(updateFrame);
-        };
-        
-        updateFrame();
       } catch (err) {
-        setError('Failed to access camera. Please ensure you have granted camera permissions.');
+        setError('Failed to load model. Please try again.');
         setIsLoading(false);
       }
     };
 
-    initCamera();
+    getVideoDevices();
+    initModel();
 
     return () => {
       if (webcamRef.current) {
@@ -100,27 +57,38 @@ const Camera = ({ onDetection }: CameraProps) => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isLive]);
+  }, []);
+
+  const handleWebcamSetup = (webcam: any) => {
+    webcamRef.current = webcam;
+    const updateFrame = () => {
+      if (!isLive || !webcamRef.current) return;
+      webcamRef.current.update();
+      animationFrameRef.current = requestAnimationFrame(updateFrame);
+    };
+    updateFrame();
+  };
 
   const handleCapture = async () => {
     if (!webcamRef.current || !modelRef.current) return;
     
     setIsLive(false);
     try {
-      const predictions = await modelRef.current.predict(webcamRef.current.canvas);
+      const canvas = webcamRef.current.canvas;
+      setCapturedImage(canvas.toDataURL('image/jpeg'));
+      
+      const predictions = await modelRef.current.predict(canvas);
       const bestPrediction = predictions.reduce((prev: any, current: any) => 
         (prev.probability > current.probability) ? prev : current
       );
       
       if (bestPrediction.probability >= 0.5) {
-        const imageUrl = webcamRef.current.canvas.toDataURL('image/jpeg');
-        
         const detection: Detection = {
           animal: bestPrediction.className,
           confidence: bestPrediction.probability,
           audioRange: AUDIO_RANGES[bestPrediction.className],
           timestamp: new Date(),
-          imageUrl
+          imageUrl: canvas.toDataURL('image/jpeg')
         };
         setCurrentDetection(detection);
         onDetection(detection);
@@ -133,7 +101,19 @@ const Camera = ({ onDetection }: CameraProps) => {
   const handleResume = () => {
     setIsLive(true);
     setCurrentDetection(null);
+    setCapturedImage(undefined);
     setError(null);
+  };
+
+  const handleSwitchCamera = async () => {
+    if (devices.length <= 1) return;
+    
+    if (webcamRef.current) {
+      webcamRef.current.stop();
+    }
+
+    const nextIndex = (currentDeviceIndex + 1) % devices.length;
+    setCurrentDeviceIndex(nextIndex);
   };
 
   if (error) {
@@ -156,39 +136,22 @@ const Camera = ({ onDetection }: CameraProps) => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : (
-          <>
-            <div
-              ref={containerRef}
-              className="aspect-video bg-sage rounded-lg overflow-hidden"
+          <div className="relative">
+            <CameraDisplay
+              isLive={isLive}
+              deviceId={devices[currentDeviceIndex]?.deviceId}
+              onWebcamSetup={handleWebcamSetup}
+              capturedImage={capturedImage}
             />
-            <div className="mt-4 space-y-4">
-              {devices.length > 1 && (
-                <Button 
-                  onClick={switchCamera} 
-                  variant="outline" 
-                  className="w-full"
-                >
-                  <SwitchCamera className="w-4 h-4 mr-2" />
-                  Switch Camera ({currentDeviceIndex + 1}/{devices.length})
-                </Button>
-              )}
-              {isLive ? (
-                <Button 
-                  onClick={handleCapture} 
-                  className="w-full"
-                >
-                  Capture and Identify
-                </Button>
-              ) : (
-                <Button 
-                  onClick={handleResume} 
-                  className="w-full"
-                >
-                  Resume Camera
-                </Button>
-              )}
-            </div>
-          </>
+            <CameraControls
+              isLive={isLive}
+              devices={devices}
+              currentDeviceIndex={currentDeviceIndex}
+              onCapture={handleCapture}
+              onResume={handleResume}
+              onSwitchCamera={handleSwitchCamera}
+            />
+          </div>
         )}
 
         {currentDetection && (
