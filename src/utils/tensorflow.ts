@@ -1,14 +1,14 @@
 import { Detection } from './types';
 import { AUDIO_RANGES } from './types';
 
-const MODEL_URL = "https://teachablemachine.withgoogle.com/models/5UM9CXpEc/";
+// Using direct Google Storage URL to avoid CORS redirect issues
+const MODEL_URL = "https://storage.googleapis.com/tm-model/5UM9CXpEc/";
 
 let model: any = null;
 
 export const loadModel = async () => {
   if (!model) {
     await new Promise((resolve) => {
-      // Wait for tmImage to be available
       const checkTmImage = () => {
         if (window.tmImage) {
           resolve(true);
@@ -19,9 +19,20 @@ export const loadModel = async () => {
       checkTmImage();
     });
 
-    const modelURL = MODEL_URL + "model.json";
-    const metadataURL = MODEL_URL + "metadata.json";
-    model = await window.tmImage.load(modelURL, metadataURL);
+    try {
+      const modelURL = MODEL_URL + "model.json";
+      const metadataURL = MODEL_URL + "metadata.json";
+      
+      model = await window.tmImage.load(modelURL, metadataURL, {
+        requestInit: {
+          mode: 'cors',
+          credentials: 'omit'
+        }
+      });
+    } catch (error) {
+      console.error('Error loading model:', error);
+      throw new Error('Failed to load the animal detection model. Please try again later.');
+    }
   }
   return model;
 };
