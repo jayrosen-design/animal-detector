@@ -5,6 +5,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { playFrequency } from '@/utils/audio';
 
 interface SessionLogProps {
   detections: Detection[];
@@ -26,9 +27,13 @@ const SessionLog = ({ detections, onClearHistory }: SessionLogProps) => {
       const range = detection.audioRange;
       const [min, max] = range.split('-').map(n => parseFloat(n));
       const midRange = ((min + max) / 2).toFixed(1);
-      return `${midRange} kHz signal emitted`;
+      return midRange;
     }
-    return "No signal emitted";
+    return null;
+  };
+
+  const handlePlaySignal = (frequency: number) => {
+    playFrequency(frequency);
   };
 
   const toggleSort = () => {
@@ -81,47 +86,60 @@ const SessionLog = ({ detections, onClearHistory }: SessionLogProps) => {
               </tr>
             </thead>
             <tbody>
-              {sortedDetections.map((detection, index) => (
-                <tr
-                  key={index}
-                  className="border-t border-gray-200 hover:bg-sage/20 transition-colors"
-                >
-                  <td className="px-4 py-3">
-                    <button
-                      onClick={() => setSelectedImage(detection.imageUrl)}
-                      className="w-12 h-12 rounded overflow-hidden"
-                    >
-                      <img
-                        src={detection.imageUrl}
-                        alt={detection.animal}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  </td>
-                  <td className="px-4 py-3 text-sm">
-                    {format(detection.timestamp, 'MM/dd/yy h:mm a')}
-                  </td>
-                  <td className="px-4 py-3 text-sm font-medium">
-                    {detection.animal}
-                  </td>
-                  <td className="px-4 py-3 text-sm">
-                    {(detection.confidence * 100).toFixed(1)}%
-                  </td>
-                  <td className="px-4 py-3 text-sm">
-                    {detection.audioRange}
-                  </td>
-                  <td className="px-4 py-3 text-sm">
-                    <div className="flex items-center gap-2">
-                      {detection.confidence >= 0.75 ? (
-                        <CircleCheck className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <CircleX className="w-4 h-4 text-red-500" />
-                      )}
-                      {getSignalEmitted(detection)}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {sortedDetections.map((detection, index) => {
+                const signalFrequency = getSignalEmitted(detection);
+                return (
+                  <tr
+                    key={index}
+                    className="border-t border-gray-200 hover:bg-sage/20 transition-colors"
+                  >
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => setSelectedImage(detection.imageUrl)}
+                        className="w-12 h-12 rounded overflow-hidden"
+                      >
+                        <img
+                          src={detection.imageUrl}
+                          alt={detection.animal}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      {format(detection.timestamp, 'MM/dd/yy h:mm a')}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium">
+                      {detection.animal}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      {(detection.confidence * 100).toFixed(1)}%
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      {detection.audioRange}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      <div className="flex items-center gap-2">
+                        {signalFrequency ? (
+                          <>
+                            <CircleCheck className="w-4 h-4 text-green-500" />
+                            <button
+                              onClick={() => handlePlaySignal(parseFloat(signalFrequency))}
+                              className="text-primary hover:underline cursor-pointer"
+                            >
+                              {signalFrequency} kHz signal emitted
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <CircleX className="w-4 h-4 text-red-500" />
+                            No signal emitted
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
               {sortedDetections.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
