@@ -48,7 +48,8 @@ export const predictFromImage = async (imageElement: HTMLImageElement): Promise<
         animal: bestPrediction.className,
         confidence: bestPrediction.probability,
         audioRange: AUDIO_RANGES[bestPrediction.className],
-        timestamp: new Date()
+        timestamp: new Date(),
+        imageUrl: imageElement.src
       };
     }
     return null;

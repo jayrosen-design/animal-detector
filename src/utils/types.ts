@@ -3,6 +3,7 @@ export interface Detection {
   animal: string;
   confidence: number;
   audioRange: string;
+  imageUrl: string;
 }
 
 export interface AnimalAudioRange {

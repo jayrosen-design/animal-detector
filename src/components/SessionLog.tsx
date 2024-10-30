@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Detection } from '@/utils/types';
 import { ArrowUpDown } from 'lucide-react';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface SessionLogProps {
   detections: Detection[];
@@ -8,6 +9,7 @@ interface SessionLogProps {
 
 const SessionLog = ({ detections }: SessionLogProps) => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const sortedDetections = [...detections].sort((a, b) => {
     const comparison = a.timestamp.getTime() - b.timestamp.getTime();
@@ -37,6 +39,7 @@ const SessionLog = ({ detections }: SessionLogProps) => {
             <table className="w-full">
               <thead>
                 <tr className="bg-sage/50">
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Image</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Time</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Animal</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Audio Range</th>
@@ -48,6 +51,18 @@ const SessionLog = ({ detections }: SessionLogProps) => {
                     key={index}
                     className="border-t border-gray-200 hover:bg-sage/20 transition-colors"
                   >
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => setSelectedImage(detection.imageUrl)}
+                        className="w-12 h-12 rounded overflow-hidden"
+                      >
+                        <img
+                          src={detection.imageUrl}
+                          alt={detection.animal}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    </td>
                     <td className="px-4 py-3 text-sm">
                       {detection.timestamp.toLocaleTimeString()}
                     </td>
@@ -61,7 +76,7 @@ const SessionLog = ({ detections }: SessionLogProps) => {
                 ))}
                 {sortedDetections.length === 0 && (
                   <tr>
-                    <td colSpan={3} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={4} className="px-4 py-8 text-center text-gray-500">
                       No detections yet. Try uploading an image or using the camera!
                     </td>
                   </tr>
@@ -71,6 +86,18 @@ const SessionLog = ({ detections }: SessionLogProps) => {
           </div>
         </div>
       </div>
+
+      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+        <DialogContent className="max-w-3xl">
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Full size preview"
+              className="w-full h-auto rounded-lg"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

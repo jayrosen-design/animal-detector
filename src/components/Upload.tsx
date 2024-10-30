@@ -4,6 +4,7 @@ import { predictFromImage } from '@/utils/tensorflow';
 import { Detection } from '@/utils/types';
 import DetectionResult from './DetectionResult';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface UploadProps {
   onDetection: (detection: Detection) => void;
@@ -12,6 +13,7 @@ interface UploadProps {
 const Upload = ({ onDetection }: UploadProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [currentDetection, setCurrentDetection] = useState<Detection | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,9 +22,12 @@ const Upload = ({ onDetection }: UploadProps) => {
 
     setIsLoading(true);
     try {
+      const imageUrl = URL.createObjectURL(file);
+      setPreviewUrl(imageUrl);
+      
       const img = new Image();
       img.crossOrigin = 'anonymous';
-      img.src = URL.createObjectURL(file);
+      img.src = imageUrl;
       
       await new Promise((resolve, reject) => {
         img.onload = resolve;
@@ -31,8 +36,12 @@ const Upload = ({ onDetection }: UploadProps) => {
       
       const detection = await predictFromImage(img);
       if (detection) {
-        setCurrentDetection(detection);
-        onDetection(detection);
+        const detectionWithImage = {
+          ...detection,
+          imageUrl
+        };
+        setCurrentDetection(detectionWithImage);
+        onDetection(detectionWithImage);
       } else {
         toast({
           title: "No animal detected",
@@ -57,8 +66,18 @@ const Upload = ({ onDetection }: UploadProps) => {
       <div className="max-w-md mx-auto">
         <label className="block w-full aspect-video bg-sage border-2 border-dashed border-primary rounded-lg cursor-pointer hover:bg-sage/80 transition-colors">
           <div className="flex flex-col items-center justify-center h-full">
-            <UploadIcon className="w-12 h-12 text-primary mb-2" />
-            <span className="text-primary font-medium">Upload Image</span>
+            {previewUrl ? (
+              <img 
+                src={previewUrl} 
+                alt="Preview" 
+                className="w-full h-full object-contain rounded-lg"
+              />
+            ) : (
+              <>
+                <UploadIcon className="w-12 h-12 text-primary mb-2" />
+                <span className="text-primary font-medium">Upload Image</span>
+              </>
+            )}
             <input
               type="file"
               className="hidden"
