@@ -13,6 +13,10 @@ const Index = () => {
     setDetections(prev => [...prev, detection]);
   };
 
+  const handleClearHistory = () => {
+    setDetections([]);
+  };
+
   return (
     <div className="min-h-screen bg-sage pb-20">
       <header className="bg-primary text-white p-4 shadow-md">
@@ -22,7 +26,7 @@ const Index = () => {
       <main className="container mx-auto px-4 py-6">
         {activeTab === 'upload' && <Upload onDetection={handleDetection} />}
         {activeTab === 'camera' && <Camera onDetection={handleDetection} />}
-        {activeTab === 'log' && <SessionLog detections={detections} />}
+        {activeTab === 'log' && <SessionLog detections={detections} onClearHistory={handleClearHistory} />}
       </main>
 
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />

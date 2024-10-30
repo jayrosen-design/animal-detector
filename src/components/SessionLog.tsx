@@ -1,16 +1,20 @@
 import { useState } from 'react';
 import { Detection } from '@/utils/types';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 interface SessionLogProps {
   detections: Detection[];
+  onClearHistory: () => void;
 }
 
-const SessionLog = ({ detections }: SessionLogProps) => {
+const SessionLog = ({ detections, onClearHistory }: SessionLogProps) => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const sortedDetections = [...detections].sort((a, b) => {
     const comparison = a.timestamp.getTime() - b.timestamp.getTime();
@@ -31,18 +35,37 @@ const SessionLog = ({ detections }: SessionLogProps) => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
   };
 
+  const handleClearHistory = () => {
+    onClearHistory();
+    toast({
+      title: "History cleared",
+      description: "Detection history has been cleared successfully.",
+    });
+  };
+
   return (
     <div className="w-full px-4">
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-4 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-primary">Detection History</h2>
-          <button
-            onClick={toggleSort}
-            className="flex items-center text-gray-600 hover:text-primary transition-colors"
-          >
-            <ArrowUpDown className="w-4 h-4 mr-1" />
-            {sortOrder === 'asc' ? 'Oldest first' : 'Newest first'}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={toggleSort}
+              className="flex items-center text-gray-600 hover:text-primary transition-colors"
+            >
+              <ArrowUpDown className="w-4 h-4 mr-1" />
+              {sortOrder === 'asc' ? 'Oldest first' : 'Newest first'}
+            </button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleClearHistory}
+              className="flex items-center gap-1"
+            >
+              <Trash2 className="w-4 h-4" />
+              Clear History
+            </Button>
+          </div>
         </div>
         
         <div className="overflow-x-auto">
