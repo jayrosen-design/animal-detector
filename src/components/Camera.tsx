@@ -3,6 +3,7 @@ import { Camera as CameraIcon } from 'lucide-react';
 import { loadModel, setupWebcam } from '@/utils/tensorflow';
 import { Detection, AUDIO_RANGES } from '@/utils/types';
 import DetectionResult from './DetectionResult';
+import { Button } from './ui/button';
 
 interface CameraProps {
   onDetection: (detection: Detection) => void;
@@ -12,12 +13,12 @@ const Camera = ({ onDetection }: CameraProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentDetection, setCurrentDetection] = useState<Detection | null>(null);
+  const [isCapturing, setIsCapturing] = useState(true);
   const webcamRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const animationFrameRef = useRef<number>();
 
   useEffect(() => {
-    let animationFrame: number;
-    
     const initCamera = async () => {
       try {
         await loadModel();
@@ -25,6 +26,7 @@ const Camera = ({ onDetection }: CameraProps) => {
         webcamRef.current = webcam;
         
         if (containerRef.current) {
+          containerRef.current.innerHTML = '';
           containerRef.current.appendChild(webcam.canvas);
         }
         
@@ -32,13 +34,14 @@ const Camera = ({ onDetection }: CameraProps) => {
         setIsLoading(false);
         
         const predict = async () => {
+          if (!isCapturing) return;
+          
           const predictions = await webcamRef.current.model.predict(webcam.canvas);
           const bestPrediction = predictions.reduce((prev: any, current: any) => 
             (prev.probability > current.probability) ? prev : current
           );
           
           if (bestPrediction.probability >= 0.5) {
-            // Create a data URL from the canvas
             const imageUrl = webcam.canvas.toDataURL('image/jpeg');
             
             const detection: Detection = {
@@ -50,10 +53,11 @@ const Camera = ({ onDetection }: CameraProps) => {
             };
             setCurrentDetection(detection);
             onDetection(detection);
+            setIsCapturing(false);
           }
           
           webcam.update();
-          animationFrame = requestAnimationFrame(predict);
+          animationFrameRef.current = requestAnimationFrame(predict);
         };
         
         predict();
@@ -69,11 +73,16 @@ const Camera = ({ onDetection }: CameraProps) => {
       if (webcamRef.current) {
         webcamRef.current.stop();
       }
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [onDetection]);
+  }, [onDetection, isCapturing]);
+
+  const handleResume = () => {
+    setIsCapturing(true);
+    setCurrentDetection(null);
+  };
 
   if (error) {
     return (
@@ -92,10 +101,20 @@ const Camera = ({ onDetection }: CameraProps) => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : (
-          <div
-            ref={containerRef}
-            className="aspect-video bg-sage rounded-lg overflow-hidden"
-          />
+          <>
+            <div
+              ref={containerRef}
+              className="aspect-video bg-sage rounded-lg overflow-hidden"
+            />
+            {!isCapturing && (
+              <Button 
+                onClick={handleResume} 
+                className="mt-4 w-full"
+              >
+                Resume Camera
+              </Button>
+            )}
+          </>
         )}
 
         {currentDetection && (
