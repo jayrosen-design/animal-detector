@@ -56,11 +56,9 @@ WildSight offers an innovative, AI-powered solution to mitigate these risks and 
 - **Device Prototype**:  
   [Watch Device Demo](https://youtube.com/shorts/a0Vg4vuzcJ4?feature=share)
 
-For this prototype, image datasets of animals from Kaggle were used to classify 8 groups of animals commonly found near the road. These images were uploaded to Teachable Machine to train an AI model to identify animals. The TensorFlow trained model was integrated into a GPT-Engineer built react app, allowing a user to upload or take photos with a device for the AI to recognize, and emit an ultrasonic sound. A log records the animals detected and the ultrasonic audio that was emitted.
 ---
 
-## **Acknowledgments**
-WildSight was developed as part of the **Devpost GPT4o Code & Conquer AI Hackathon**, where it won **2nd Place**. Special thanks to all the team members and organizers for their support.
+For this prototype, image datasets of animals from Kaggle were used to classify 8 groups of animals commonly found near the road. These images were uploaded to Teachable Machine to train an AI model to identify animals. The TensorFlow trained model was integrated into a GPT-Engineer built react app, allowing a user to upload or take photos with a device for the AI to recognize, and emit an ultrasonic sound. A log records the animals detected and the ultrasonic audio that was emitted.
 
 ---
 
