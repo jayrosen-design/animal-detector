@@ -1,71 +1,71 @@
-# Welcome to your GPT Engineer project
+[![DOI](https://zenodo.org/badge/880912397.svg)](https://doi.org/10.5281/zenodo.14739247)
 
-## Project info
+# **WildSight**
+### 2nd Place Winner of Devpost GPT4o Code & Conquer AI Hackathon  
 
-**URL**: https://run.gptengineer.app/projects/f9ff11d6-aa9c-4bc9-a87e-344a0999d042/improve
+<div align="center">
+  <img src="https://github.com/jayrosen-design/animal-detector/blob/main/wildsight/wildsight%20logo%20transparennt.png" alt="WildSight Logo" width="300">
+</div>
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## **Problem Statement**
+Wildlife-vehicle collisions are a major issue, resulting in:
+- Over 4,000 collisions every day in the United States.
+- Millions of animal deaths annually, costing $8.4 billion in damages.
+- 65% of surveyed drivers report witnessing or experiencing animal collisions.
 
-**Use GPT Engineer**
+WildSight offers an innovative, AI-powered solution to mitigate these risks and protect both wildlife and drivers.
 
-Simply visit the GPT Engineer project at [GPT Engineer](https://gptengineer.app/projects/f9ff11d6-aa9c-4bc9-a87e-344a0999d042/improve) and start prompting.
+---
 
-Changes made via gptengineer.app will be committed automatically to this repo.
+## **Slides**
+### **Overview of WildSight**
+<div align="center">
+  <img src="https://github.com/jayrosen-design/animal-detector/blob/main/wildsight/Slide2.PNG?raw=true" alt="WildSight Slide 2" width="100%">
+</div>
 
-**Use your preferred IDE**
+<div align="center">
+  <img src="https://github.com/jayrosen-design/animal-detector/blob/main/wildsight/Slide3.PNG?raw=true" alt="WildSight Slide 3" width="100%">
+</div>
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in the GPT Engineer UI.
+<div align="center">
+  <img src="https://github.com/jayrosen-design/animal-detector/blob/main/wildsight/Slide4.PNG?raw=true" alt="WildSight Slide 4" width="100%">
+</div>
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+<div align="center">
+  <img src="https://github.com/jayrosen-design/animal-detector/blob/main/wildsight/Slide9.PNG?raw=true" alt="WildSight Slide 9" width="100%">
+</div>
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## **Key Features**
+- **AI Vision Technology**: Detects wildlife in real time to prevent collisions.
+- **Solar-Powered**: Operates independently in remote areas.
+- **Effective Frequencies**: Emits specific sound frequencies to safely repel wildlife.
+- **Weatherproof Design**: Built for durability in all environments.
+- **Sustainable and Serviceable**: Environmentally friendly with minimal maintenance.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## **Prototypes**
+- **AI Prototype**:  
+  [View Demo](https://animal-detector.gptengineer.run/)  
+  [Watch AI Prototype Video](https://youtu.be/f40RR7-SYpQ?si=P7ohVKh_F4ftU0Hz)
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+- **Device Prototype**:  
+  [Watch Device Demo](https://youtube.com/shorts/a0Vg4vuzcJ4?feature=share)
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## **Acknowledgments**
+WildSight was developed as part of the **Devpost GPT4o Code & Conquer AI Hackathon**, where it won **2nd Place**. Special thanks to all the team members and organizers for their support.
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## **License**
+This project is licensed under [DOI: 10.5281/zenodo.14739247](https://doi.org/10.5281/zenodo.14739247).
 
-## What technologies are used for this project?
+---
 
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-All GPT Engineer projects can be deployed directly via the GPT Engineer app.
-
-Simply visit your project at [GPT Engineer](https://gptengineer.app/projects/f9ff11d6-aa9c-4bc9-a87e-344a0999d042/improve) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.gptengineer.app/tips-tricks/custom-domain/)
+**"Saving lives, human and animal, shouldn’t be optional."**
